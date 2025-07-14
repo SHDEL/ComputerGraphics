@@ -4,12 +4,12 @@ import javax.swing.JPanel;
 
 import Lab1.GraphicSwing;
 import java.awt.*;
-public class LineMethod extends JPanel{
+public class Lab2_66050019 extends JPanel{
 
 
 
     public static void main(String[] args) {
-        LineMethod m = new LineMethod();
+        Lab2_66050019 m = new Lab2_66050019();
 
         JFrame f = new JFrame();
         f.add(m);
@@ -20,15 +20,16 @@ public class LineMethod extends JPanel{
     }
     public void paintComponent(Graphics g){
         g.setColor(Color.black);
-        // naiveLineAlgo(g);
 
-        DDALineAlgo(g);
+        naiveLineAlgo(g);
+
+        // DDALineAlgo(g);
         
         // BresenhamLineAlgo(g);
     }
     private static void naiveLineAlgo(Graphics g){
         naiveLine(g, 100, 100, 400, 200);
-        // naiveLine(g, 400, 300, 100, 200);
+        naiveLine(g, 400, 300, 100, 200);
         naiveLine(g, 100, 100, 200, 400);
     }
     private static void DDALineAlgo(Graphics g){
@@ -59,39 +60,33 @@ public class LineMethod extends JPanel{
     public static void DDALine(Graphics g, int x1, int y1, int x2, int y2){
         float dx = x2 - x1;
         float dy = y2 - y1;
-        int y = y1;
+        float y = y1;
+        float x = x1;
         float m = dy / dx;
 
-        if (m >= 0  && m <= 1){
-            for (int i = x1; i <= x2; i++){
-                y = (int) (y + m);
-                // plot method
-                plot(g, i, Math.round(y));
-                
-
+        if (m >= 0 && m <= 1) {
+            y = y1;
+            for (int xInt = x1; xInt <= x2; xInt++) {
+                plot(g, xInt, Math.round(y));
+                y += m;
             }
-        }
-        else if (m <= -1){
-            for (int x = x2; x < x1; x++){
-                y = (int) (y + m);
-                // plot method
-                plot(g, x, Math.round(y));
+        } else if (m <= -1) {
+            y = y1;
+            for (int xInt = x1; xInt >= x2; xInt--) {
+                plot(g, xInt, Math.round(y));
+                y += m;
             }
-        }
-        else if (m > 1){
-            int x;
-            for (y = y1; y < y2; y++){
-                x = (int) (y + 1 / m);
-                // plot method
-                plot(g, Math.round(x), y);
+        } else if (m > 1) {
+            x = x1;
+            for (int yInt = y1; yInt <= y2; yInt++) {
+                plot(g, Math.round(x), yInt);
+                x += 1 / m;
             }
-        }
-        else{
-            int x;
-            for (y = y2; y < y1; y++){
-                x = (int) (y + 1 / m);
-                //plot method
-                plot(g, Math.round(x), y);
+        } else {
+            x = x1;
+            for (int yInt = y1; yInt >= y2; yInt--) {
+                plot(g, Math.round(x), yInt);
+                x += 1 / m;
             }
         }
     
@@ -105,7 +100,6 @@ public class LineMethod extends JPanel{
 
         boolean isSwap = false;
 
-        // swap dx and dy if slope > 1
         if (dy > dx) {
             int temp = dx;
             dx = dy;
