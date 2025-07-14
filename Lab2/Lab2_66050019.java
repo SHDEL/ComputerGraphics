@@ -2,7 +2,7 @@ package Lab2;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import Lab1.GraphicSwing;
+
 import java.awt.*;
 public class Lab2_66050019 extends JPanel{
 
