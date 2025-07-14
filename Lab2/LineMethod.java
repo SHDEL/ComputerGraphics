@@ -6,8 +6,6 @@ import Lab1.GraphicSwing;
 import java.awt.*;
 public class LineMethod extends JPanel{
 
-
-
     public static void main(String[] args) {
         LineMethod m = new LineMethod();
 
@@ -22,13 +20,13 @@ public class LineMethod extends JPanel{
         g.setColor(Color.black);
         // naiveLineAlgo(g);
 
-        DDALineAlgo(g);
+        // DDALineAlgo(g);
         
-        // BresenhamLineAlgo(g);
+        BresenhamLineAlgo(g);
     }
     private static void naiveLineAlgo(Graphics g){
         naiveLine(g, 100, 100, 400, 200);
-        // naiveLine(g, 400, 300, 100, 200);
+        naiveLine(g, 400, 300, 100, 200);
         naiveLine(g, 100, 100, 200, 400);
     }
     private static void DDALineAlgo(Graphics g){
