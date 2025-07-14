@@ -21,11 +21,11 @@ public class Lab2_66050019 extends JPanel{
     public void paintComponent(Graphics g){
         g.setColor(Color.black);
 
-        naiveLineAlgo(g);
+        // naiveLineAlgo(g);
 
         DDALineAlgo(g);
         
-        BresenhamLineAlgo(g);
+        // BresenhamLineAlgo(g);
     }
     private static void naiveLineAlgo(Graphics g){
         naiveLine(g, 100, 100, 400, 200);
@@ -68,26 +68,31 @@ public class Lab2_66050019 extends JPanel{
         if (m >= 0 && m <= 1) {
             y = y1;
             for (int xInt = x1; xInt <= x2; xInt++) {
-                plot(g, xInt, Math.round(y));
                 y += m;
+                plot(g, xInt, Math.round(y));
+                
             }
         } else if (m <= -1) {
             y = y1;
-            for (int xInt = x1; xInt >= x2; xInt--) {
-                plot(g, xInt, Math.round(y));
+            for (int xInt = x2; xInt >= x1; xInt--) {
                 y += m;
+                plot(g, xInt, Math.round(y));
+                
             }
         } else if (m > 1) {
             x = x1;
             for (int yInt = y1; yInt <= y2; yInt++) {
-                plot(g, Math.round(x), yInt);
                 x += 1 / m;
+                plot(g, Math.round(x), yInt);
+
+                
             }
         } else {
             x = x1;
-            for (int yInt = y1; yInt >= y2; yInt--) {
-                plot(g, Math.round(x), yInt);
+            for (int yInt = y2; yInt >= y1; yInt--) {
                 x += 1 / m;
+                plot(g, Math.round(x), yInt);
+
             }
         }
     
