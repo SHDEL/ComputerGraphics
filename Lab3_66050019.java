@@ -7,9 +7,9 @@ import javax.swing.JFrame;
 
 import java.util.Queue;
 
-public class Lab3 extends JPanel{
+public class Lab3_66050019 extends JPanel{
     public static void main(String[] args) {
-        Lab3 m = new Lab3();
+        Lab3_66050019 m = new Lab3_66050019();
 
         JFrame f = new JFrame();
         f.add(m);
@@ -23,7 +23,7 @@ public class Lab3 extends JPanel{
         
         super.paintComponent(g);
         drawBezier(g);
-        drawpolygonLine(g);
+        // drawpolygonLine(g);
 
     }
     private void drawpolygonLine(Graphics g){
