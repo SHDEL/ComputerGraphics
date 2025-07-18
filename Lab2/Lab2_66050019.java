@@ -1,12 +1,10 @@
-package Lab2;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 
 import java.awt.*;
 public class Lab2_66050019 extends JPanel{
-
-
 
     public static void main(String[] args) {
         Lab2_66050019 m = new Lab2_66050019();
@@ -17,6 +15,7 @@ public class Lab2_66050019 extends JPanel{
         f.setSize(600,600);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setVisible(true);
+        
     }
     public void paintComponent(Graphics g){
         g.setColor(Color.black);
