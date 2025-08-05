@@ -1,3 +1,4 @@
+package Lab3;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
@@ -22,8 +23,8 @@ public class Lab3_66050019 extends JPanel{
     public void paintComponent(Graphics g){
         
         super.paintComponent(g);
-        drawBezier(g);
-        // drawpolygonLine(g);
+        // drawBezier(g);
+        drawpolygonLine(g);
 
     }
     private void drawpolygonLine(Graphics g){
