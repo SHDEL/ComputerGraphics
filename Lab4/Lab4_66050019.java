@@ -1,19 +1,9 @@
 package Lab4;
-
-import java.awt.*;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import java.awt.*;
 
-import Lab3.Lab3_66050019;
-
-public class Lab4_66050019 extends JPanel implements Runnable{
-
-    double circleMove = 0;
-    double squareRotate = 0;
-    double squareMove = 0;
-    boolean isMoveRight = true;
-    
-
+public class Lab4_66050019 extends JPanel{
     public static void main(String[] args) {
         Lab4_66050019 m = new Lab4_66050019();
 
@@ -23,73 +13,100 @@ public class Lab4_66050019 extends JPanel implements Runnable{
         f.setSize(600,600);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setVisible(true);
-
-        (new Thread(m)).start();
         
     }
     public void paintComponent(Graphics g){
-
-        Graphics2D g2 = (Graphics2D) g.create();
-        g2.setColor(Color.WHITE);
-        g2.fillRect(0, 0, 600, 600);
-        g2.setColor(Color.BLACK);
-        g2.translate(circleMove, 0);
-        g2.drawOval(0, 0, 100, 100);
-
-        // Rectangle
-        // g2.translate(-circleMove, 0);
-        // g2.rotate(squareRotate, 300,300);
-        // g2.drawRect(200, 200, 200, 200);
-
-        // Rectangle bottomleft
-        Graphics2D g3 = (Graphics2D) g.create();
-        g3.setColor(Color.BLACK);
-        g3.translate(0, squareMove);
-        g3.drawRect(0, 510, 50, 50);
         
+        super.paintComponent(g);
+
+        Graphics2D g2 = (Graphics2D) g;
+
+        g2.setColor(Color.RED);
+
+        // midpointCircle(g2, 200, 200, 100);
+        midpointEllipse(g2, 200, 200, 120, 80);
+
     }
-    public void run() {
-        double lastTime = System.currentTimeMillis();
-        double currentTime, elapsedTime;
-        double startTime = System.currentTimeMillis();
+    public void midpointCircle(Graphics2D g, int xc, int yc, int r) {
+        int x = 0;
+        int y = r;
+        int d = 1 - r;
 
-        while (true){
-            currentTime = System.currentTimeMillis();
-            elapsedTime = currentTime - lastTime;
-            lastTime = currentTime;
-
-            double time = currentTime - startTime;
-            System.out.println("time: " + time);
+        while (x <= y) {
+            plot8CirclePoints(g, xc, yc, x, y);
             
-            //TODO: update logics
-            if (time >= 3000){
-                squareMove -= 100.0 * elapsedTime / 1000.0;
+            x++;
+            if (d < 0) {
+                d += 2 * x + 1;
+            } else {
+                y--;
+                d += 2 * (x - y) + 1;
             }
-            if (isMoveRight){
-                if (circleMove < 500){
-                    circleMove += 100.0 * elapsedTime / 1000.0;
-                }
-                else {
-                    circleMove = 500;
-                    isMoveRight = false;
-                }
-            }
-            else{
-                if (circleMove > 0){
-                    circleMove -= 100.0 * elapsedTime / 1000.0;
-                }
-                else{
-                    circleMove = 0;
-                    isMoveRight = true;
-                }
-            }
-            
-            
-
-            
-            //Display
-            repaint();
         }
     }
-    
+    private void plot8CirclePoints(Graphics2D g, int xc, int yc, int x, int y) {
+        g.drawLine(xc + x, yc + y, xc + x, yc + y);
+        g.drawLine(xc - x, yc + y, xc - x, yc + y);
+        g.drawLine(xc + x, yc - y, xc + x, yc - y);
+        g.drawLine(xc - x, yc - y, xc - x, yc - y);
+        g.drawLine(xc + y, yc + x, xc + y, yc + x);
+        g.drawLine(xc - y, yc + x, xc - y, yc + x);
+        g.drawLine(xc + y, yc - x, xc + y, yc - x);
+        g.drawLine(xc - y, yc - x, xc - y, yc - x);
+
+    }
+    public void midpointEllipse(Graphics2D g, int xc, int yc, int a, int b) {
+        int a2 = a * a;
+        int b2 = b * b;
+        int twoA2 = 2 * a2;
+        int twoB2 = 2 * b2;
+
+        // REGION 1
+        int x = 0;
+        int y = b;
+        int Dx = 0;
+        int Dy = twoA2 * y;
+        int d1 = Math.round(b2 - a2 * b + 0.25f * a2);
+
+        while (Dx <= Dy) {
+            plot4EllipsePoints(g, xc, yc, x, y);
+
+            x++;
+            Dx += twoB2;
+            d1 += Dx + b2;
+            if (d1 >= 0) {
+                y--;
+                Dy -= twoA2;
+                d1 -= Dy;
+            }
+        }
+
+        // REGION 2
+        x = a;
+        y = 0;
+        Dx = twoB2 * x;
+        Dy = 0;
+        int d2 = Math.round(a2 - b2 * a + 0.25f * b2);
+
+        while (Dx >= Dy) {
+            plot4EllipsePoints(g, xc, yc, x, y);
+
+            y++;
+            Dy += twoA2;
+            d2 += Dy + a2;
+            if (d2 >= 0) {
+                x--;
+                Dx -= twoB2;
+                d2 -= Dx;
+            }
+        }
+    }
+    private void plot4EllipsePoints(Graphics2D g, int xc, int yc, int x, int y) {
+        g.drawLine(xc + x, yc + y, xc + x, yc + y); // ล่างขวา
+        g.drawLine(xc - x, yc + y, xc - x, yc + y); // ล่างซ้าย
+        g.drawLine(xc + x, yc - y, xc + x, yc - y); // บนขวา
+        g.drawLine(xc - x, yc - y, xc - x, yc - y); // บนซ้าย
+    }
+
+
 }
