@@ -22,9 +22,9 @@ public class Lab2_66050019 extends JPanel{
 
         // naiveLineAlgo(g);
 
-        DDALineAlgo(g);
+        // DDALineAlgo(g);
         
-        // BresenhamLineAlgo(g);
+        BresenhamLineAlgo(g);
     }
     private static void naiveLineAlgo(Graphics g){
         naiveLine(g, 100, 100, 400, 200);
