@@ -54,4 +54,5 @@ public class PixelArt {
         g.setColor(Color.BLUE);
         g.fillRect(baseX + 30, baseY - 70, 20, 10);
     }
+    
 }

@@ -14,6 +14,7 @@ public class ArmOnlyDrawing extends JPanel {
         int panelW = getWidth();
         int panelH = getHeight();
 
+        
         // Background
         g2d.setColor(Color.BLACK);
         g2d.fillRect(0, 0, panelW, panelH);

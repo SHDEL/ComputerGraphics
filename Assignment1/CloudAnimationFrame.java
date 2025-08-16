@@ -35,6 +35,7 @@ public class CloudAnimationFrame extends JFrame {
         private int skyHeight = 800;
         private int groundHeight = 150;
 
+        
         public SkyPanel() {
             clouds = new ArrayList<>();
             // Upper clouds

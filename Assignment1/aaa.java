@@ -36,6 +36,7 @@ public class aaa extends JPanel {
         g2d.fillOval(headX + 15, headY + 15, headSize, headSize);
         g2d.fillArc(bodyX + 15, bodyY + 15, bodyWidth, bodyHeight, 0, 180);
 
+        
         // --- Person (dark gray) ---
         g2d.setColor(Color.DARK_GRAY);
         g2d.fillOval(headX, headY, headSize, headSize);

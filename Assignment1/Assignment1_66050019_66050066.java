@@ -107,6 +107,7 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
 
             // วาดฉาก (Pixel Art)
             drawScene(g, groundY, cameraY);
+            
         }
 
     }
