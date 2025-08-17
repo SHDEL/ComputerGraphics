@@ -11,16 +11,15 @@ import java.util.List;
 
 public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
 
-    private double angle = 0; // มุมหมุน
-    private Color bg = new Color(26, 0, 64);
-    private boolean isNoise = false;
-    private boolean isPortalShow = false;
-    private double portalSize = 2;
-    private double portalScale = 1;
-    private double personScale = 2;
-    private double fadeOpacity = 0.0;
-    private boolean showFade = false;
-    private List<Cloud> clouds;
+    private double angle = 0; // มุมหมุนของ Portal
+    private boolean isNoise = false; // แสดง Noise บนจอ
+    private boolean isPortalShow = false; // แสดง Portal
+    private double portalSize = 2; // ขนาดของเส้น Portal
+    private double portalScale = 1; // ขนาดของ Portal ทั้งหมด
+    private double personScale = 2; // ขนาดของ Person คนแรก
+    private double fadeOpacity = 0.0; // Fade ดำ
+    private boolean showFade = false; // แสดง Fade ดำ
+    private List<Cloud> clouds; 
     private int cameraY = 0;
     private int cameraSpeed = 1;
     private int skyHeight = 800;
@@ -42,26 +41,21 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
     public Assignment1_66050019_66050066(){
         clouds = new ArrayList<>();
         // Upper clouds
-        clouds.add(new Cloud(50, 100, 120, 60, 1));
-        clouds.add(new Cloud(300, 200, 150, 80, 1));
+        clouds.add(new Cloud(100, 100, 120, 60, 1));
+        clouds.add(new Cloud(250, 200, 150, 80, 1));
         clouds.add(new Cloud(400, 50, 100, 50, 1));
-        clouds.add(new Cloud(150, 150, 80, 40, 1));
-        clouds.add(new Cloud(500, 70, 130, 60, 1));
+        clouds.add(new Cloud(200, 150, 80, 40, 1));
+        clouds.add(new Cloud(300, 70, 130, 60, 1));
 
         // Lower clouds near ground (adjustable)
-        clouds.add(new Cloud(100, 400, 120, 60, 1));
-        clouds.add(new Cloud(350, 450, 140, 70, 1));
+        clouds.add(new Cloud(150, 400, 120, 60, 1));
+        clouds.add(new Cloud(300, 450, 140, 70, 1));
     }
 
     public void paintComponent(Graphics g){
         super.paintComponent(g); // ล้างพื้นหลัง
-
+        
         BufferedImage buffer = new BufferedImage(601, 601, BufferedImage.TYPE_INT_ARGB);
-        // Graphics2D bufferGraphics = buffer.createGraphics();
-        // bufferGraphics.setComposite(AlphaComposite.Clear); // ล้างภาพใน buffer
-        // bufferGraphics.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
-        // bufferGraphics.setComposite(AlphaComposite.SrcOver); // คืนค่าการวาดปกติ
-        // bufferGraphics.dispose();
         
         g.setColor(new Color(18, 23, 48));
         g.fillRect(0, 0, 600, 600);
@@ -95,9 +89,11 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
             g.fillRect(0, -cameraY, getWidth(), skyHeight);
 
             // วาดเมฆ
-            g.setColor(Color.WHITE);
+            Graphics2D g1 = (Graphics2D)g.create();
+            g1.setColor(Color.WHITE);
             for (Cloud cloud : clouds) {
-                g.fillOval(cloud.x, cloud.y - cameraY, cloud.width, cloud.height);
+                g1.translate(cloud.x, 0);
+                midpointEllipseFill(g, (int)Math.round(cloud.x) + cloud.width/2, cloud.y - cameraY + cloud.height/2, cloud.width/2, cloud.height/2, Color.WHITE);
             }
 
             // วาดพื้นดิน
@@ -107,16 +103,21 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
 
             // วาดฉาก (Pixel Art)
             drawScene(g, groundY, cameraY);
+            drawPerson(g);
+
         }
+        
+        
 
     }
     public void updateScene(double elapsedTime) {
         // Move clouds horizontally and cycle
         for (Cloud cloud : clouds) {
-            cloud.x += cloud.speed ;
-            if (cloud.x > getWidth()) {
-                cloud.x = -cloud.width; // cycle back to left
-            }
+            cloud.x += 100 * elapsedTime / 1000.0;
+                if (cloud.x > 600){
+                    cloud.x = -cloud.width;
+
+                }
         }
 
         // Move camera down until ground reaches bottom
@@ -148,10 +149,8 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
 
             if (time >= 4.0 && portalSize < 25){
                 isPortalShow = true;
-                portalSize += 2 * elapsedTime / 1000;
-                portalScale += 2 * elapsedTime / 1000;
-                // System.out.println("portalscale: " + portalScale);
-                // System.out.println("portalsize: " + portalSize);
+                portalSize += 3 * elapsedTime / 1000;
+                portalScale += 3 * elapsedTime / 1000;
                 if (portalSize >= 25){
                     portalSize = 25;
                 }
@@ -160,7 +159,7 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
                 showFade = true;
                 fadeOpacity += 1 * elapsedTime / 1000;
                 if (fadeOpacity > 1.0) {
-                    fadeOpacity = 1.0; // จำกัดค่าความทึบไม่ให้เกิน 1.0
+                    fadeOpacity = 1.0;
                 }
             }
 
@@ -170,7 +169,6 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
             }
             
             angle += 0.01; // ปรับมุมเพื่อหมุน
-            // System.out.println("time: " + time);
             try {
                 Thread.sleep(1);
                 
@@ -187,7 +185,7 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
         g3.setColor(color);
         g3.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
-        int layers = 100; // จำนวนเส้นโค้ง
+        int layers = 50; // จำนวนเส้นโค้ง
         for (int i = 0; i < layers; i++) {
             
             double offsetAngle = angle + (i * Math.PI / 10); // มุมแต่ละเส้น
@@ -213,36 +211,23 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
     }
 
     private void drawFadeEffect(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g.create();
         fillRectCustom(g, 0, 0, getWidth(), getHeight(), new Color(0, 0, 0, (int) (fadeOpacity * 255)));
     }
     private void drawTable(Graphics g){
-        // Graphics2D g3 = (Graphics2D) g2;
-        // g3.setColor();
-        // g.setColor(new Color(145, 114, 0));
-        // g.fillRect(0, 380, 600, 220);
-        // g3.fillRect(0, 380,600,220);
         fillRectCustom(g, 0, 380, 600, 220, new Color(145, 114, 0));
         
     }
     private void drawMonitor(Graphics g){
-        // Graphics2D g3 = (Graphics2D) g2;
         Color monitor = new Color(47, 48, 48);
-        // g3.setColor(new Color(47, 48, 48));
         
         // monitor stand
-        // g3.fillRect(290, 320, 20, 70);
         fillRectCustom(g,290, 320, 20, 70, monitor);
-        // g3.fillRect(270,390,100,10);
         fillRectCustom(g, 250, 390, 100, 10, monitor);
 
         // monitor stroke
-        // g3.fillRect(180, 200, 250, 150);
         fillRectCustom(g, 180, 200, 250, 150, monitor);
 
         // monitor panel
-        // g3.setColor(Color.white);
-        // g3.fillRect(190, 210, 230, 130);
         fillRectCustom(g, 190, 210, 230, 130, Color.white);
 
         // พิกัดจอ
@@ -254,9 +239,6 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
         
         // ===== วาดแสงขาวออกจากจอ =====
         drawGlow(g, screenX, screenY, screenW, screenH);
-        
-        // วาด static noise
-        // drawStaticNoise(g3, 190, 210, 230, 130);
 
     }
     private void drawGlow(Graphics g, int x, int y, int w, int h) {
@@ -275,12 +257,9 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
         int[] xs = {x - w, x + 2*w, x + 2*w, x - w};
         int[] ys = {y - h, y - h, y + 2*h, y + 2*h};
         g1.fillPolygon(xs, ys, 4);
-        // g1.fillRect(x - w, y - h, w * 3, h * 3);
     }
 
     private void drawStaticNoise(Graphics g) {
-        // System.out.println("enter drawstaticnoise");
-        Graphics2D g1 = (Graphics2D) g.create();
         int x = 190;
         int y = 210;
         int w = 230;
@@ -290,8 +269,8 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
             int px = x + rand.nextInt(w);
             int py = y + rand.nextInt(h);
             int gray = rand.nextInt(256); // ค่าความสว่าง
-            g1.setColor(new Color(gray, gray, gray));
-            g1.fillRect(px, py, 1, 1);
+            g.setColor(new Color(gray, gray, gray));
+            plot(g, px, py, 1);
         }
     }
 
@@ -343,12 +322,12 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
 
         // === GRASS FIELD ===
         g.setColor(new Color(124, 252, 0)); // bright green
-        g.fillRect(0, groundY - cameraY, 600, 150);
+        fillRectCustom(g,0, groundY - cameraY, 600, 150, new Color(124, 252, 0));
 
         // little highlights
         g.setColor(new Color(200, 255, 120));
-        g.fillRect(100, groundY - cameraY + 50, 50, 10);
-        g.fillRect(300, groundY - cameraY + 80, 60, 12);
+        fillRectCustom(g, 100, groundY - cameraY + 50, 50, 10, new Color(200, 255, 120));
+        fillRectCustom(g, 300, groundY - cameraY + 80, 60, 12,  new Color(200, 255, 120));
 
         // === CASTLE ===
         drawCastle(g, 350, groundY - cameraY - 180);
@@ -357,16 +336,14 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
     private void drawCastle(Graphics g, int baseX, int baseY) {
         // main tower
         g.setColor(new Color(170, 170, 200));
-        g.fillRect(baseX, baseY, 60, 180);
+        fillRectCustom(g, baseX, baseY, 60, 180, new Color(170, 170, 200));
 
         // windows
-        g.setColor(Color.BLACK);
-        g.fillRect(baseX + 20, baseY + 30, 20, 30);
-        g.fillRect(baseX + 20, baseY + 80, 20, 30);
+        fillRectCustom(g, baseX + 20, baseY + 30, 20, 30, Color.BLACK);
+        fillRectCustom(g, baseX + 20, baseY + 80, 20, 30, Color.BLACK);
 
         // side building
-        g.setColor(new Color(150, 150, 190));
-        g.fillRect(baseX - 80, baseY + 60, 80, 120);
+        fillRectCustom(g, baseX - 80, baseY + 60, 80, 120,new Color(150, 150, 190));
 
         // roof
         g.setColor(new Color(80, 80, 120));
@@ -378,7 +355,40 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
         g.setColor(Color.BLACK);
         g.drawLine(baseX + 30, baseY - 40, baseX + 30, baseY - 70);
         g.setColor(Color.BLUE);
-        g.fillRect(baseX + 30, baseY - 70, 20, 10);
+        fillRectCustom(g, baseX + 30, baseY - 70, 20, 10, Color.BLUE);
+    }
+    private void drawPerson(Graphics g){
+        Graphics2D g2d = (Graphics2D) g;
+
+        // ---- Ground Shadow ----
+        // drawGroundShadow(g2d);
+
+        // ---- Character Shadow ----
+        // g2d.setColor(new Color(0, 0, 0, 80));
+        // int shadowOffsetX = -10;
+        // int shadowOffsetY = -10;
+        // drawHead(g2d, shadowOffsetX, shadowOffsetY);
+        // drawBody(g2d, shadowOffsetX, shadowOffsetY);
+        // drawLeftArm(g2d, -30, shadowOffsetX, shadowOffsetY);
+        // drawRightArm(g2d, -40, shadowOffsetX, shadowOffsetY);
+        // drawLegs(g2d, shadowOffsetX, shadowOffsetY);
+
+        // ---- Decoration ----
+        // Sword
+        g.setColor(Color.BLACK);
+        drawSword(g, 380, 250, Math.toRadians(45), 0.4);
+
+        // Main character
+        g2d.setColor(Color.BLACK);
+        drawHead(g2d, 0, 0);
+        drawBody(g2d, 0, 0);
+        drawLeftArm(g2d, -30, 0, 0);
+        drawRightArm(g2d, -40, 0, 0);
+        drawLegs(g2d, 0, 0);
+
+        // Shield & Armor
+        drawShield(g, 160, 340, Math.toRadians(45), 0.4);
+        drawArmor(g, 250, 315, Math.toRadians(0), 0.4);
     }
 
     public static void BresenhamLine(Graphics g, int x1, int y1, int x2, int y2){
@@ -472,33 +482,6 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
         g.drawLine(xc - y, yc - x, xc - y, yc - x);
 
     }
-    private void midpointCircleBuffer(BufferedImage buffer, int xc, int yc, int r, Color color){
-        int x = 0;
-        int y = r;
-        int d = 1 - r;
-
-        while (x <= y) {
-            plot8CirclePointsBuffer(buffer, xc, yc, x, y, color);
-            x++;
-            if (d < 0) {
-                d += 2 * x + 1;
-            } else {
-                y--;
-                d += 2 * (x - y) + 1;
-            }
-        }
-    }
-    private void plot8CirclePointsBuffer(BufferedImage buffer, int xc, int yc, int x, int y, Color color) {
-        int c = color.getRGB();
-        buffer.setRGB(xc + x, yc + y, c);
-        buffer.setRGB(xc - x, yc + y, c);
-        buffer.setRGB(xc + x, yc - y, c);
-        buffer.setRGB(xc - x, yc - y, c);
-        buffer.setRGB(xc + y, yc + x, c);
-        buffer.setRGB(xc - y, yc + x, c);
-        buffer.setRGB(xc + y, yc - x, c);
-        buffer.setRGB(xc - y, yc - x, c);
-    }
     private void midpointCircleFillBuffer(BufferedImage buffer, int xc, int yc, int r, Color color) {
         int c = color.getRGB();
         for (int y = -r; y <= r; y++) {
@@ -526,7 +509,9 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
         int d1 = Math.round(b2 - a2 * b + 0.25f * a2);
 
         while (Dx <= Dy) {
-            plot4EllipsePoints(g, xc, yc, x, y);
+            // plot4EllipsePoints(g, xc, yc, x, y);
+            BresenhamLine(g, xc - x, yc + y, xc + x, yc + y);
+            BresenhamLine(g, xc - x, yc - y, xc + x, yc - y);
 
             x++;
             Dx += twoB2;
@@ -546,7 +531,9 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
         int d2 = Math.round(a2 - b2 * a + 0.25f * b2);
 
         while (Dx >= Dy) {
-            plot4EllipsePoints(g, xc, yc, x, y);
+            // plot4EllipsePoints(g, xc, yc, x, y);
+            BresenhamLine(g, xc - x, yc + y, xc + x, yc + y);
+            BresenhamLine(g, xc - x, yc - y, xc + x, yc - y);
 
             y++;
             Dy += twoA2;
@@ -563,6 +550,16 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
         g.drawLine(xc - x, yc + y, xc - x, yc + y); // ล่างซ้าย
         g.drawLine(xc + x, yc - y, xc + x, yc - y); // บนขวา
         g.drawLine(xc - x, yc - y, xc - x, yc - y); // บนซ้าย
+    }
+    public void midpointEllipseFill(Graphics g, int xc, int yc, int a, int b, Color color) {
+        g.setColor(color);
+        for (int y = -b; y <= b; y++) {
+            // คำนวณ x ที่ขอบซ้าย/ขวา
+            double x = a * Math.sqrt(1 - (y * y) / (double)(b * b));
+            int xLeft = (int)Math.round(xc - x);
+            int xRight = (int)Math.round(xc + x);
+            BresenhamLine(g, xLeft, yc + y, xRight, yc + y);
+        }
     }
     public BufferedImage FloodFill(BufferedImage m, int x, int y, Color targetColour, Color replacementColor) {
         Graphics2D g3 = m.createGraphics();
@@ -604,20 +601,299 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
         }
         return m;
     }
+    public void drawArmor(Graphics g, int cx, int cy, double angle, double scale) {
+        // Chest plate
+        int[] chestX = { -90, -110, -100, -70, 0, 70, 100, 110, 90, 60, -60 };
+        int[] chestY = { 0, 80, 180, 260, 300, 260, 180, 80, 0, -30, -30 };
 
-    
+        Polygon chest = new Polygon();
+        for (int i = 0; i < chestX.length; i++) {
+            Point p = transform(chestX[i], chestY[i], cx, cy, angle, scale);
+            chest.addPoint(p.x, p.y);
+        }
+
+        g.setColor(new Color(160, 160, 170));
+        g.fillPolygon(chest);
+        g.setColor(Color.DARK_GRAY);
+        g.drawPolygon(chest);
+
+        // Shoulder plates
+        int[] leftShoulderX = { -140, -170, -150, -110 };
+        int[] leftShoulderY = { -20, 40, 100, 60 };
+
+        Polygon leftShoulder = new Polygon();
+        for (int i = 0; i < leftShoulderX.length; i++) {
+            Point p = transform(leftShoulderX[i], leftShoulderY[i], cx, cy, angle, scale);
+            leftShoulder.addPoint(p.x, p.y);
+        }
+
+        int[] rightShoulderX = { 140, 170, 150, 110 };
+        int[] rightShoulderY = { -20, 40, 100, 60 };
+
+        Polygon rightShoulder = new Polygon();
+        for (int i = 0; i < rightShoulderX.length; i++) {
+            Point p = transform(rightShoulderX[i], rightShoulderY[i], cx, cy, angle, scale);
+            rightShoulder.addPoint(p.x, p.y);
+        }
+
+        g.setColor(new Color(140, 140, 150));
+        g.fillPolygon(leftShoulder);
+        g.fillPolygon(rightShoulder);
+
+        g.setColor(Color.DARK_GRAY);
+        g.drawPolygon(leftShoulder);
+        g.drawPolygon(rightShoulder);
+    }
+
+    public void drawShield(Graphics g, int cx, int cy, double angle, double scale) {
+        int[] shieldX = { -70, -110, -70, 0, 70, 110, 80, 0 };
+        int[] shieldY = { 0, 100, 140, 220, 140, 100, 0, 0 };
+
+        Polygon shield = new Polygon();
+        for (int i = 0; i < shieldX.length; i++) {
+            Point p = transform(shieldX[i], shieldY[i], cx, cy, angle, scale);
+            shield.addPoint(p.x, p.y);
+        }
+
+        g.setColor(new Color(100, 120, 180));
+        g.fillPolygon(shield);
+
+        g.setColor(Color.DARK_GRAY);
+        g.drawPolygon(shield);
+
+        // Cross emblem
+        int crossWidth = 20;
+        int crossHeight = 60;
+
+        int[] vertX = { -crossWidth, crossWidth, crossWidth, -crossWidth };
+        int[] vertY = { 40, 40, 100, 100 };
+        Polygon vertical = new Polygon();
+        for (int i = 0; i < vertX.length; i++) {
+            Point p = transform(vertX[i], vertY[i], cx, cy, angle, scale);
+            vertical.addPoint(p.x, p.y);
+        }
+
+        int[] horizX = { -crossHeight, crossHeight, crossHeight, -crossHeight };
+        int[] horizY = { 60, 60, 80, 80 };
+        Polygon horizontal = new Polygon();
+        for (int i = 0; i < horizX.length; i++) {
+            Point p = transform(horizX[i], horizY[i], cx, cy, angle, scale);
+            horizontal.addPoint(p.x, p.y);
+        }
+
+        g.setColor(new Color(220, 190, 40));
+        g.fillPolygon(vertical);
+        g.fillPolygon(horizontal);
+    }
+
+    public void drawSword(Graphics g, int cx, int cy, double angle, double scale) {
+        int guardY = 0;
+        int shoulderY = -140;
+        int tipY = -220;
+        int handleBottom = 120;
+
+        // Blade
+        int[] bladeX = { -26, -24, -20, 0, 20, 24, 30 };
+        int[] bladeY = { guardY, shoulderY, shoulderY - 20, tipY, shoulderY - 20, shoulderY, guardY };
+
+        Polygon blade = new Polygon();
+        for (int i = 0; i < bladeX.length; i++) {
+            Point p = transform(bladeX[i], bladeY[i], cx, cy, angle, scale);
+            blade.addPoint(p.x, p.y);
+        }
+
+        g.setColor(Color.LIGHT_GRAY);
+        g.fillPolygon(blade);
+
+        // Fuller
+        int[] fullerX = { -5, -2, 0, 2, 5 };
+        int[] fullerY = { guardY, shoulderY - 20, tipY + 30, shoulderY - 20, guardY };
+
+        Polygon fuller = new Polygon();
+        for (int i = 0; i < fullerX.length; i++) {
+            Point p = transform(fullerX[i], fullerY[i], cx, cy, angle, scale);
+            fuller.addPoint(p.x, p.y);
+        }
+
+        g.setColor(new Color(150, 150, 150));
+        g.fillPolygon(fuller);
+
+        // Guard
+        int[] guardX = { -80, -60, 60, 80, 60, -60 };
+        int[] guardYArr = { guardY, guardY + 14, guardY + 14, guardY, guardY + 6, guardY + 6 };
+
+        Polygon guard = new Polygon();
+        for (int i = 0; i < guardX.length; i++) {
+            Point p = transform(guardX[i], guardYArr[i], cx, cy, angle, scale);
+            guard.addPoint(p.x, p.y);
+        }
+
+        g.setColor(Color.DARK_GRAY);
+        g.fillPolygon(guard);
+
+        // Handle
+        int[] handleX = { -12, 12, 12, -12 };
+        int[] handleY = { guardY + 14, guardY + 14, handleBottom, handleBottom };
+
+        Polygon handle = new Polygon();
+        for (int i = 0; i < handleX.length; i++) {
+            Point p = transform(handleX[i], handleY[i], cx, cy, angle, scale);
+            handle.addPoint(p.x, p.y);
+        }
+
+        g.setColor(new Color(90, 60, 30));
+        g.fillPolygon(handle);
+
+        // Pommel
+        int[] pommelX = { -16, 0, 16, 0 };
+        int[] pommelY = { handleBottom, handleBottom + 24, handleBottom, handleBottom - 12 };
+
+        Polygon pommel = new Polygon();
+        for (int i = 0; i < pommelX.length; i++) {
+            Point p = transform(pommelX[i], pommelY[i], cx, cy, angle, scale);
+            pommel.addPoint(p.x, p.y);
+        }
+
+        g.setColor(Color.GRAY);
+        g.fillPolygon(pommel);
+    }
+
+    private void drawLegs(Graphics g, int offsetX, int offsetY) {
+        int n = 360;
+
+        // Left leg
+        int cx1 = 210 + offsetX, cy1 = 510 + offsetY;
+        int a1 = 25, b1 = 90;
+
+        int[] x1 = new int[n];
+        int[] y1 = new int[n];
+        for (int i = 0; i < n; i++) {
+            double angle = 2 * Math.PI * i / n;
+            x1[i] = (int) (cx1 + a1 * Math.cos(angle));
+            y1[i] = (int) (cy1 + b1 * Math.sin(angle));
+        }
+        g.fillPolygon(x1, y1, n);
+
+        // Right leg
+        int cx2 = 290 + offsetX, cy2 = 510 + offsetY;
+        int a2 = 25, b2 = 90;
+
+        int[] x2 = new int[n];
+        int[] y2 = new int[n];
+        for (int i = 0; i < n; i++) {
+            double angle = 2 * Math.PI * i / n;
+            x2[i] = (int) (cx2 + a2 * Math.cos(angle));
+            y2[i] = (int) (cy2 + b2 * Math.sin(angle));
+        }
+        g.fillPolygon(x2, y2, n);
+    }
+
+    private void drawRightArm(Graphics g, double angleDeg, int offsetX, int offsetY) {
+        int cx = 330 + offsetX;
+        int cy = 300 + offsetY;
+
+        int a = 60;
+        int b = 20;
+        int n = 360;
+
+        int[] x = new int[n];
+        int[] y = new int[n];
+        double theta = Math.toRadians(angleDeg);
+
+        for (int i = 0; i < n; i++) {
+            double angle = 2 * Math.PI * i / n;
+            double px = a * Math.cos(angle);
+            double py = b * Math.sin(angle);
+
+            double rx = px * Math.cos(theta) - py * Math.sin(theta);
+            double ry = px * Math.sin(theta) + py * Math.cos(theta);
+
+            x[i] = (int) (cx + rx);
+            y[i] = (int) (cy + ry);
+        }
+        g.fillPolygon(x, y, n);
+    }
+
+    private void drawLeftArm(Graphics g, double angleDeg, int offsetX, int offsetY) {
+        int cx = 160 + offsetX;
+        int cy = 350 + offsetY;
+
+        int a = 60;
+        int b = 20;
+        int n = 360;
+
+        int[] x = new int[n];
+        int[] y = new int[n];
+        double theta = Math.toRadians(angleDeg);
+
+        for (int i = 0; i < n; i++) {
+            double angle = 2 * Math.PI * i / n;
+            double px = a * Math.cos(angle);
+            double py = b * Math.sin(angle);
+
+            double rx = px * Math.cos(theta) - py * Math.sin(theta);
+            double ry = px * Math.sin(theta) + py * Math.cos(theta);
+
+            x[i] = (int) (cx + rx);
+            y[i] = (int) (cy + ry);
+        }
+        g.fillPolygon(x, y, n);
+    }
+
+    private void drawBody(Graphics g, int offsetX, int offsetY) {
+        int cx = 250 + offsetX;
+        int cy = 380 + offsetY;
+
+        int a = 70;
+        int b = 100;
+        int n = 360;
+
+        int[] x = new int[n];
+        int[] y = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            double angle = 2 * Math.PI * i / n;
+            x[i] = (int) (cx + a * Math.cos(angle));
+            y[i] = (int) (cy + b * Math.sin(angle));
+        }
+        g.fillPolygon(x, y, n);
+    }
+
+    private void drawHead(Graphics g, int offsetX, int offsetY) {
+        int n = 360;
+        int r = 50;
+
+        int cx = 250 + offsetX;
+        int cy = 250 + offsetY;
+
+        int[] x = new int[n];
+        int[] y = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            double angle = 2 * Math.PI * i / n;
+            x[i] = (int) (cx + r * Math.cos(angle));
+            y[i] = (int) (cy + r * Math.sin(angle));
+        }
+        g.fillPolygon(x, y, n);
+    }
+    private static Point transform(int x, int y, int cx, int cy, double angle, double scale) {
+        double sx = x * scale;
+        double sy = y * scale;
+        double rx = sx * Math.cos(angle) - sy * Math.sin(angle);
+        double ry = sx * Math.sin(angle) + sy * Math.cos(angle);
+        return new Point((int) (cx + rx), (int) (cy + ry));
+    } 
 }
 class Cloud {
-    
-        int x, y, width, height, speed;
+        double x;
+        int y, width, height, speed;
 
-        public Cloud(int x, int y, int width, int height, int speed) {
+        public Cloud(double x, int y, int width, int height, int speed) {
             this.x = x;
             this.y = y;
             this.width = width;
             this.height = height;
             this.speed = speed;
-        }
-        
+        } 
     }
     

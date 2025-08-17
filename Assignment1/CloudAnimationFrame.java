@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CloudAnimationFrame extends JFrame {
+    
 
     public CloudAnimationFrame() {
         setTitle("Sky to Ground");
