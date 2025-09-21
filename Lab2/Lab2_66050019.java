@@ -38,8 +38,8 @@ public class Lab2_66050019 extends JPanel{
         DDALine(g, 100, 100,200, 400);
     }
     private static void BresenhamLineAlgo(Graphics g){
-        BresenhamLine(g, 100, 100, 400, 200);
-        BresenhamLine(g, 400, 300, 100, 200);
+        // BresenhamLine(g, 100, 100, 400, 200);
+        // BresenhamLine(g, 400, 300, 100, 200);
         BresenhamLine(g, 100, 100, 200, 400);
     }
     private static void plot(Graphics g, int x, int y){

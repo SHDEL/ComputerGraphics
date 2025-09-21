@@ -62,9 +62,7 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
 
         // วาดโต๊ะและจอ
         drawTable(g);
-        
         drawMonitor(g);
-        
         
         if (isNoise) {
             drawStaticNoise(g);
@@ -84,6 +82,7 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
         
 
         if (showNewWorld){
+
             // วาดท้องฟ้า
             g.setColor(new Color(135, 206, 235));
             g.fillRect(0, -cameraY, getWidth(), skyHeight);
@@ -104,11 +103,7 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
             // วาดฉาก (Pixel Art)
             drawScene(g, groundY, cameraY);
             drawPerson(g);
-
         }
-        
-        
-
     }
     public void updateScene(double elapsedTime) {
         // Move clouds horizontally and cycle
@@ -133,7 +128,6 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
     }
     @Override
     public void run() {
-
         double lastTime = System.currentTimeMillis();
         double currentTime, elapsedTime;
         double startTime = System.currentTimeMillis();
@@ -170,7 +164,7 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
             
             angle += 0.01; // ปรับมุมเพื่อหมุน
             try {
-                Thread.sleep(1);
+                Thread.sleep(16);
                 
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -359,19 +353,6 @@ public class Assignment1_66050019_66050066 extends JPanel implements Runnable{
     }
     private void drawPerson(Graphics g){
         Graphics2D g2d = (Graphics2D) g;
-
-        // ---- Ground Shadow ----
-        // drawGroundShadow(g2d);
-
-        // ---- Character Shadow ----
-        // g2d.setColor(new Color(0, 0, 0, 80));
-        // int shadowOffsetX = -10;
-        // int shadowOffsetY = -10;
-        // drawHead(g2d, shadowOffsetX, shadowOffsetY);
-        // drawBody(g2d, shadowOffsetX, shadowOffsetY);
-        // drawLeftArm(g2d, -30, shadowOffsetX, shadowOffsetY);
-        // drawRightArm(g2d, -40, shadowOffsetX, shadowOffsetY);
-        // drawLegs(g2d, shadowOffsetX, shadowOffsetY);
 
         // ---- Decoration ----
         // Sword
